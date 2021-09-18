@@ -4,37 +4,63 @@
 
 void pinfoP()
 {
-    // int id;
-    // pid_t cpid;
-    // char path[1000];
-    // char buffer[1000];
-    // if (i == 1)
-    // {
-    //     cpid = getpid();
-    // }
-    // else
-    // {
-    //     cpid = atoi(args[1]);
-    // }
-    // printf("pid -- %d\n", cpid);
-    // sprintf(path, "/proc/%d/stat", cpid);
-    // printf("path: %s\n", path);
+    int id;
+    id = getpid();
+    char pidstat[500];
+    strcpy(pidstat, "/linprocfs/");
+    char idchar[500];
+    sprintf(idchar, "%d", id);
+    strcat(pidstat, idchar);
 
-    // FILE *fp = fopen(path, "r");
-    // printf("%s\n", fp);
-    // if (!fp)
-    // {
-    //     perror("Error while opening the proc/pid/status file\n");
-    // }
-    // else
-    // {
-    //     char state;
-    //     fgets(buffer, 256, fp);
-    //     fgets(buffer, 256, fp);
-    //     sscanf(buffer, "State:\t%c", &state);
-    //     printf("Process Status -- %c\n", state);
-    //     fclose(fp);
-    // }
+    char execstat[500];
+    strcpy(execstat, pidstat);
+
+    strcat(pidstat, "/stat");
+    strcat(execstat, "/exe");
+
+    int printerr = 0;
+
+    int fd = open(pidstat, O_RDONLY);
+    if (fd < 0)
+    {
+        
+        printf("Process doesnt exist\n");
+        printerr = 1;
+    }
+    else
+    {
+        char statbuff[10000];
+        read(fd, statbuff, 10000);
+        char *pinfoarg = strtok(statbuff, " ");
+
+        printf("pid -- %s\n", pinfoarg);
+
+        pinfoarg = strtok(NULL, " ");
+        pinfoarg = strtok(NULL, " ");
+
+        printf("Process Status -- %s\n", pinfoarg);
+
+        for (int i = 0; i < 20; i++)
+            pinfoarg = strtok(NULL, " ");
+
+        printf("Memory -- %s\n", pinfoarg);
+    }
+
+    char execbuff[10000];
+    int t = readlink(execstat, execbuff, 10000);
+    if (t < 0)
+    {
+        if (printerr == 0)
+        {
+            
+            printf("Readlink error\n");
+        
+        }
+    }
+    else
+        printf("Executable path -- %s\n", execbuff);
+
+    close(fd);
 }
 
 // History
