@@ -5,10 +5,10 @@
 #include "prompt.h"
 #include "echo.h"
  
-void echoP(){
+void echoP(char args[1000][1000]){
 
     for(int j =1;j<i;j++){
-        printf("%s",args[j]);
+        printf("%s ",args[j]);
     }
     printf("\n");
 }

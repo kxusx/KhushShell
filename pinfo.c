@@ -2,80 +2,84 @@
 #include "headers.h"
 #include "utils.h"
 
-void pinfoP()
+void pinfoP(char args[1000][1000])
 {
-    int id;
-    id = getpid();
-    char pidstat[500];
-    strcpy(pidstat, "/linprocfs/");
-    char idchar[500];
-    sprintf(idchar, "%d", id);
-    strcat(pidstat, idchar);
-
-    char execstat[500];
-    strcpy(execstat, pidstat);
-
-    strcat(pidstat, "/stat");
-    strcat(execstat, "/exe");
-
-    int printerr = 0;
-
-    int fd = open(pidstat, O_RDONLY);
-    if (fd < 0)
+    pid_t pid;
+    int f;
+    char buf[1000], fileName[1000], pinfo[1000][1000], pidstat[1000], pidexe[1000], *tok, pu[1000];
+    int c; // args[1]
+    if (i == 1)
     {
-        
-        printf("Process doesnt exist\n");
-        printerr = 1;
+        pid = getpid();
     }
     else
     {
-        char statbuff[10000];
-        read(fd, statbuff, 10000);
-        char *pinfoarg = strtok(statbuff, " ");
-
-        printf("pid -- %s\n", pinfoarg);
-
-        pinfoarg = strtok(NULL, " ");
-        pinfoarg = strtok(NULL, " ");
-
-        printf("Process Status -- %s\n", pinfoarg);
-
-        for (int i = 0; i < 20; i++)
-            pinfoarg = strtok(NULL, " ");
-
-        printf("Memory -- %s\n", pinfoarg);
+        c = atoi(args[1]);
+        pid = c;
     }
 
-    char execbuff[10000];
-    int t = readlink(execstat, execbuff, 10000);
-    if (t < 0)
+    sprintf(pidstat, "/proc/%d/stat", pid);
+    f = open(pidstat, O_RDONLY);
+    //f = open("ptr.txt", O_RDONLY);
+
+    if (f < 0)
     {
-        if (printerr == 0)
+        perror("Process doesnt exist");
+        return;
+    }
+    else
+    {
+        FILE *fp;
+        int r = read(f, buf, 10000);
+
+        int k = 0;
+        tok = strtok(buf, " ");
+        while (tok != NULL)
         {
-            
-            printf("Readlink error\n");
-        
+            strcpy(pinfo[k], tok);
+            //printf("pinfo[%d]:%s\n", k, pinfo[k]);
+            tok = strtok(NULL, " ");
+            k++;
+        }
+
+        printf("pid -- %d\n", pid);
+        printf("Process Status -- {%s", pinfo[2]);
+        if (strcmp(pinfo[0], pinfo[7]) == 0)
+        {
+            printf("+}\n");
+        }
+        else
+        {
+            printf("}\n");
+        }
+        printf("Memory -- %s {Virtual Memory}\n", pinfo[22]);
+    }
+
+    sprintf(pidexe, "/proc/%d/exe", pid);
+    int x = readlink(pidexe, buf, sizeof(buf));
+    printf("Executable path -- ");
+    if (x <= 0)
+    {
+        perror("Readlink error");
+        return;
+    }
+    else
+    {
+        buf[x] = 0;
+        strcpy(pu, buf);
+        char *r;
+        r = strstr(pu, HomeDir);
+        if (r)
+        {
+            char output[500] = "";
+            strncpy(output, pu + strlen(HomeDir), strlen(pu) - strlen(HomeDir));
+            printf("~%s\n", output);
+        }
+        else
+        {
+            printf("%s\n", pu);
         }
     }
-    else
-        printf("Executable path -- %s\n", execbuff);
-
-    close(fd);
+    printf("\n");
+    close(f);
 }
-
-// History
-// array 21 size 
-//     - only allow 20 size
-//     - when inserting after 20, put in at 21, start at 1, write it to file
-//     - make start at 0, when reading 
-
-// - first read
-// - add on array
-// - put into file
-// read
-
-// Functions : 
-// to READ
-// to ADD ( which will read and write)
-// to WRITE
-// to print    (which will need read)

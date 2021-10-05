@@ -7,7 +7,10 @@ int cdQ()
     char temp[1000];
     char *t = malloc(1000);
     getcwd(temp, sizeof(temp));
-    if(strcmp(args[1], "") == 0 || strcmp(args[1], "~") == 0)
+    if(i==1){
+        chdir(HomeDir);
+    }
+    else if(strcmp(args[1], "~") == 0 || strcmp(args[1], " ") == 0)
     {
         chdir(HomeDir);
     }

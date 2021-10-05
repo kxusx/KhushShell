@@ -2,7 +2,7 @@
 #include "headers.h"
 #include "utils.h"
 
-void lsP()
+void lsP(char args[1000][1000])
 {
     struct stat stats;
     int lflag = 0;
@@ -16,9 +16,8 @@ void lsP()
     int j = 1;
     char CurrentDir[5000];
     getcwd(CurrentDir, sizeof(CurrentDir));
-    
 
-    while (j<i)
+    while (j < i)
     {
         if (strcmp(args[j], "-l") == 0)
             lflag = 1;
@@ -66,8 +65,8 @@ void lsP()
                 fileflag = 1;
             }
             else
-            {   
-                sprintf(Buffer,"ls:%s",paths[k]);
+            {
+                sprintf(Buffer, "ls:%s", paths[k]);
                 perror(Buffer);
                 continue;
             }
@@ -76,14 +75,14 @@ void lsP()
         {
             strcpy(DirPath, paths[k]);
         }
-        
+
         // if file
         if (fileflag == 1)
         {
             strcpy(filePath, CurrentDir);
             strcat(filePath, "/");
-            strcat(filePath, paths[k]);  
-            if(lflag == 1)
+            strcat(filePath, paths[k]);
+            if (lflag == 1)
             {
                 lstat(filePath, &stats);
                 strcpy(Buffer, "");
@@ -104,10 +103,26 @@ void lsP()
                 printf("%s ", pass->pw_name);
                 printf("%s ", grp->gr_name);
                 printf("%6lld ", stats.st_size);
-                char gettime[500];
-                strcpy(gettime, ctime(&stats.st_mtime));
-                gettime[strcspn(gettime, "\n")] = 0;
-                printf("%10s ", gettime);
+                // char gettime[500];
+                // strcpy(gettime, ctime(&stats.st_mtime));
+                // gettime[strcspn(gettime, "\n")] = 0;
+                // printf("%10s ", gettime);
+                time_t present = time(NULL);
+                struct tm time_l, time_p;
+                char time_val[256];
+                localtime_r(&stats.st_mtime, &time_l);
+                localtime_r(&present, &time_p);
+
+                if (time_l.tm_year != time_p.tm_year)
+                {
+                    strftime(time_val, sizeof(time_val), "%b %e %Y", localtime(&stats.st_mtime));
+                }
+                else
+                {
+                    strftime(time_val, sizeof(time_val), "%b %e %H:%M", localtime(&stats.st_mtime));
+                }
+                printf(" %s ", time_val);
+
                 printf("%s\n", paths[k]);
             }
             else
@@ -118,15 +133,16 @@ void lsP()
         // if not file
         else
         {
-            if(DirPath[strlen(DirPath)-1]=='/' && strlen(DirPath)>1){
-                DirPath[strlen(DirPath)-1] = '\0';
+            if (DirPath[strlen(DirPath) - 1] == '/' && strlen(DirPath) > 1)
+            {
+                DirPath[strlen(DirPath) - 1] = '\0';
             }
             // printf("DirPath : %s\n", DirPath);
             lsdir = opendir(DirPath);
 
             if (lsdir == NULL)
             {
-                sprintf(Buffer,"ls:%s",paths[k]);
+                sprintf(Buffer, "ls:%s", paths[k]);
                 perror(Buffer);
                 continue;
             }
@@ -138,7 +154,7 @@ void lsP()
                     strcpy(filePath, DirPath);
                     strcat(filePath, "/");
                     strcat(filePath, sd->d_name);
-                    printf("FilePath:%s\n", filePath);
+                    //printf("FilePath:%s\n", filePath);
                     lstat(filePath, &stats);
                     total += stats.st_blocks;
                 }
@@ -173,10 +189,27 @@ void lsP()
                     printf("%s ", pass->pw_name);
                     printf("%s ", grp->gr_name);
                     printf("%6lld ", stats.st_size);
-                    char gettime[500];
-                    strcpy(gettime, ctime(&stats.st_mtime));
-                    gettime[strcspn(gettime, "\n")] = 0;
-                    printf("%10s ", gettime);
+                    // char gettime[500];
+                    // strcpy(gettime, ctime(&stats.st_mtime));
+                    // gettime[strcspn(gettime, "\n")] = 0;
+                    // printf("%10s ", gettime);
+
+                    time_t present = time(NULL);
+                    struct tm time_l, time_p;
+                    char time_val[256];
+                    localtime_r(&stats.st_mtime, &time_l);
+                    localtime_r(&present, &time_p);
+
+                    if (time_l.tm_year != time_p.tm_year)
+                    {
+                        strftime(time_val, sizeof(time_val), "%b %e %Y", localtime(&stats.st_mtime));
+                    }
+                    else
+                    {
+                        strftime(time_val, sizeof(time_val), "%b %e %H:%M", localtime(&stats.st_mtime));
+                    }
+                    printf(" %s ", time_val);
+
                     printf("%s \n", sd->d_name);
                 }
             }
@@ -236,10 +269,28 @@ void lsP()
                         printf("%s ", pass->pw_name);
                         printf("%s ", grp->gr_name);
                         printf("%6lld ", stats.st_size);
-                        char gettime[500];
-                        strcpy(gettime, ctime(&stats.st_mtime));
-                        gettime[strcspn(gettime, "\n")] = 0;
-                        printf("%10s ", gettime);
+
+                        // char gettime[500];
+                        // strcpy(gettime, ctime(&stats.st_mtime));
+                        // gettime[strcspn(gettime, "\n")] = 0;
+                        // printf("%10s ", gettime);
+
+                        time_t present = time(NULL);
+                        struct tm time_l, time_p;
+                        char time_val[256];
+                        localtime_r(&stats.st_mtime, &time_l);
+                        localtime_r(&present, &time_p);
+
+                        if (time_l.tm_year != time_p.tm_year)
+                        {
+                            strftime(time_val, sizeof(time_val), "%b %e %Y", localtime(&stats.st_mtime));
+                        }
+                        else
+                        {
+                            strftime(time_val, sizeof(time_val), "%b %e %H:%M", localtime(&stats.st_mtime));
+                        }
+                        printf(" %s ", time_val);
+
                         printf("%s \n", sd->d_name);
                     }
                 }

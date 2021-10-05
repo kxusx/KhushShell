@@ -72,11 +72,10 @@ char *delete (pid_t pid)
 //     return current->pid;
 // }
 
-int foreground()
+int foreground(char args[1000][1000])
 {   
     
     pid_t pid = fork();
-    
     char *arguments[1000];
     for (int j = 0; j < i; j++)
     {
@@ -105,11 +104,11 @@ int foreground()
     return 0;
 }
 
-int background()
+int background(char args[1000][1000])
 {
     pid_t pid = fork();
-
     char *arguments[1000];
+
     for (int j = 0; j < i; j++)
     {
         arguments[j] = malloc(500);
@@ -124,14 +123,16 @@ int background()
     }
     else if (pid == 0) //child
     {
+        setpgid(0,0);
         if (execvp(arguments[0], arguments) < 0)
         {
             printf("Command '%s' not found\n", args[0]);
         }
-        exit(0);
+        exit(0);  
     }
     else
     {
+        printf("%d\n",pid);
         insert(pid, 1, arguments[0]);
         processCount++;
     }

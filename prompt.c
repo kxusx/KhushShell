@@ -3,9 +3,12 @@
 #include "utils.h"
 #include "prompt.h"
 #include "echo.h"
+#include "redirection.h"
 
 void prompt()
-{ 
+{   
+   
+
     char CurrDir[500];
     char *curr=malloc(500);
     char s[10] = ".";
@@ -16,9 +19,9 @@ void prompt()
 
     getcwd(CurrDir, sizeof(CurrDir));
     strcpy(curr,CurrDir);
-    //printf("\ncurr in prompt : %s\nsize of curr:%lu\nsize of homedir:%lu\n",curr,strlen(curr),strlen(HomeDir));
-
-
+   //printf("\ncurr in prompt : %s\nsize of curr:%lu\nsize of homedir:%lu\n",curr,strlen(curr),strlen(HomeDir));
+ 
+ 
     if (strcmp(CurrDir, HomeDir) == 0)
     {
         printf("%s@%s:~>", name, token);
@@ -29,25 +32,6 @@ void prompt()
          
     }else{
         printf("%s@%s:%s>", name, token, CurrDir);
-    }
-
-    
- //printf("\n4prompt\n");
-    
+    }   
+ 
 }
-//
-    // char *ssc;
-
-    //
-    // printf("%s@%s:~>", name, token);
-
-    //  ssc = strtok(CurrDir,p);
-    //  printf("\n%s",HomeDir);
-    //  printf("\n%s",CurrDir);
-
-    //  printf("\n%s",ssc);
-
-    // if(strstr(CurrDir,HomeDir)==0){
-
-    // }
-    //printf("token : %s\n",token);
